@@ -1,0 +1,33 @@
+# Fichiers et dossiers générés par Maven
+/target/
+
+# Fichiers compilés Java
+*.class
+
+# Fichiers de logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+
+# Fichiers de cache et système (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# Répertoires et fichiers des IDE
+
+## IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+## Eclipse
+.classpath
+.project
+.settings/
+
+## VS Code
+.vscode/
+
+# Autres dossiers de build (si utilisés)
+build/
