@@ -21,6 +21,8 @@ Thumbs.db
 *.iml
 out/
 
+notes.txt
+
 ## Eclipse
 .classpath
 .project
