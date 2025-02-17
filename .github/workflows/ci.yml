@@ -12,7 +12,7 @@ jobs:
 
     services:
       mongo:
-        image: mongo:latest
+        image: mongo:4.4
         ports:
           - 27017:27017
         options: >-
@@ -20,7 +20,6 @@ jobs:
           --health-interval 5s 
           --health-timeout 5s 
           --health-retries 10
-
 
     env:
       SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/catalog
