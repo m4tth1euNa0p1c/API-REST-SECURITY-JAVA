@@ -21,8 +21,8 @@ jobs:
           java-version: 17
           cache: maven
 
-      - name: Start MongoDB using docker-compose
-        run: docker-compose -f docker-compose.yml up -d mongo
+      - name: Start MongoDB using Docker Compose
+        run: docker compose -f docker-compose.yml up -d mongo
 
       - name: Wait for MongoDB to be ready
         run: |
@@ -44,6 +44,6 @@ jobs:
       - name: Run tests with Maven
         run: mvn test --batch-mode
 
-      - name: Shutdown docker-compose
+      - name: Shutdown Docker Compose
         if: always()
-        run: docker-compose -f docker-compose.yml down
+        run: docker compose -f docker-compose.yml down
