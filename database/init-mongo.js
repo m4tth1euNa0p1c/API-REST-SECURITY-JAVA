@@ -1,12 +1,9 @@
-// Sélection de la base de données "catalog"
 db = db.getSiblingDB('catalog');
 
-// Création de la collection "products" (si elle n'existe pas déjà)
 if (!db.getCollectionNames().includes("products")) {
   db.createCollection('products');
 }
 
-// Insertion de produits d'exemple dans la collection "products"
 db.products.insertMany([
   {
     name: "Produit 1",
@@ -25,17 +22,15 @@ db.products.insertMany([
   }
 ]);
 
-// Création de la collection "users" (si elle n'existe pas déjà)
 if (!db.getCollectionNames().includes("users")) {
   db.createCollection('users');
 }
 
-// Insertion d'utilisateurs d'exemple dans la collection "users"
 db.users.insertMany([
   {
     username: "admin",
     email: "admin@example.com",
-    password: "$2a$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // Mot de passe hashé d'exemple
+    password: "$2a$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     firstName: "Admin",
     lastName: "User",
     roles: ["ADMIN", "USER"],
@@ -46,7 +41,7 @@ db.users.insertMany([
   {
     username: "user1",
     email: "user1@example.com",
-    password: "$2a$10$yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy", // Mot de passe hashé d'exemple
+    password: "$2a$10$yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
     firstName: "User",
     lastName: "One",
     roles: ["USER"],
@@ -57,7 +52,7 @@ db.users.insertMany([
   {
     username: "user2",
     email: "user2@example.com",
-    password: "$2a$10$zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", // Mot de passe hashé d'exemple
+    password: "$2a$10$zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
     firstName: "User",
     lastName: "Two",
     roles: ["USER"],
@@ -67,5 +62,4 @@ db.users.insertMany([
   }
 ]);
 
-// Création d'un index unique sur le champ "username" pour la collection "users"
 db.users.createIndex({ "username": 1 }, { unique: true });

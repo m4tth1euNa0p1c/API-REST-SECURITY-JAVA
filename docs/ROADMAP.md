@@ -137,7 +137,3 @@ API_REST_security/
 
 ---
 
-## 6. Conclusion
-
-Cette roadmap offre une vision claire des étapes de développement pour l'API REST sécurisée. Chaque phase est conçue pour être itérative et testable, permettant ainsi une montée en puissance progressive vers une application de production robuste et sécurisée.
-

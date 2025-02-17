@@ -33,8 +33,7 @@ public class SecurityConfig {
     
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authBuilder = 
-                http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authBuilder.userDetailsService(customUserDetailsService)
                    .passwordEncoder(passwordEncoder());
         return authBuilder.build();
@@ -47,9 +46,25 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests(authorize -> authorize
-                .antMatchers("/", "/index.html", "/login.html", "/register.html", "/dashboard.html" ,"/css/**", "/js/**",
-                             "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/v3/api-docs", "/webjars/**")
-                    .permitAll()
+                .antMatchers(
+                    "/", 
+                    "/index.html", 
+                    "/login.html", 
+                    "/register.html",
+                    "/dashboard.html",
+                    "/products.html",
+                    "/assets/**",
+                    "/partials/**",
+                    "/favicon.ico"
+                ).permitAll()
+                // Autoriser Swagger
+                .antMatchers(
+                    "/swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/v2/api-docs",
+                    "/v3/api-docs",
+                    "/webjars/**"
+                ).permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/products/**").permitAll()
                 .anyRequest().authenticated()
