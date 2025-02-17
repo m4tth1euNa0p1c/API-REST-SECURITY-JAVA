@@ -40,7 +40,6 @@ public class JwtTokenProvider {
             return true;
         } catch (SignatureException | MalformedJwtException | ExpiredJwtException |
                  UnsupportedJwtException | IllegalArgumentException ex) {
-            // Log exception if needed
         }
         return false;
     }
