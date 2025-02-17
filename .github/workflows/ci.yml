@@ -10,6 +10,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    env:
+      SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/catalog
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -20,6 +34,18 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: maven
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          echo "Waiting for MongoDB to be ready..."
+          for i in {1..30}; do
+            if nc -z localhost 27017; then
+              echo "MongoDB is up!"
+              break
+            fi
+            echo "MongoDB not ready yet. Waiting 2 seconds..."
+            sleep 2
+          done
 
       - name: Build with Maven
         run: mvn clean package --batch-mode
