@@ -10,20 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mongo:
-        image: mongo:4.4
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongo --quiet --eval 'db.runCommand({ ping: 1 })'" 
-          --health-interval 5s 
-          --health-timeout 5s 
-          --health-retries 10
-
-    env:
-      SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/catalog
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -35,20 +21,29 @@ jobs:
           java-version: 17
           cache: maven
 
+      - name: Start MongoDB using docker-compose
+        run: docker-compose -f docker-compose.yml up -d mongo
+
       - name: Wait for MongoDB to be ready
         run: |
           echo "Waiting for MongoDB to be ready..."
           for i in {1..30}; do
             if nc -z localhost 27017; then
               echo "MongoDB is up!"
-              break
+              exit 0
             fi
             echo "MongoDB not ready yet. Waiting 2 seconds..."
             sleep 2
           done
+          echo "MongoDB did not start in time"
+          exit 1
 
       - name: Build with Maven
         run: mvn clean package --batch-mode
 
       - name: Run tests with Maven
         run: mvn test --batch-mode
+
+      - name: Shutdown docker-compose
+        if: always()
+        run: docker-compose -f docker-compose.yml down
