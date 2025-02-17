@@ -3,6 +3,8 @@ package com.example.catalog.controller;
 import com.example.catalog.model.User;
 import com.example.catalog.security.JwtTokenProvider;
 import com.example.catalog.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +12,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    
     @Autowired
     private AuthenticationManager authenticationManager;
     
@@ -29,7 +36,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
     
-    // Endpoint de connexion
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -42,11 +48,14 @@ public class AuthController {
             response.put("tokenType", "Bearer");
             return ResponseEntity.ok(response);
         } catch (AuthenticationException ex) {
+            logger.error("Erreur lors de l'authentification pour l'utilisateur {}: {}", loginRequest.getUsername(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        } catch (Exception ex) {
+            logger.error("Erreur inattendue lors de la connexion: {}", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
         }
     }
     
-    // Endpoint d'inscription
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         if (userService.findByUsername(registerRequest.getUsername()).isPresent()) {
@@ -65,6 +74,23 @@ public class AuthController {
         user.setActive(true);
         User result = userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+    
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        Optional<User> userOptional = userService.findByUsername(username);
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok(userOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
     
     // DTO pour la connexion

@@ -2,9 +2,11 @@ package com.example.catalog.config;
 
 import com.example.catalog.security.CustomUserDetailsService;
 import com.example.catalog.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -27,8 +32,12 @@ public class SecurityConfig {
     }
     
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-       return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authBuilder = 
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.userDetailsService(customUserDetailsService)
+                   .passwordEncoder(passwordEncoder());
+        return authBuilder.build();
     }
     
     @Bean
@@ -38,22 +47,13 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests(authorize -> authorize
-                // Autoriser Swagger et les endpoints d'API de documentation
-                .antMatchers(
-                    "/swagger-ui/**",
-                    "/swagger-resources/**",
-                    "/v2/api-docs",
-                    "/v3/api-docs",
-                    "/webjars/**"
-                ).permitAll()
-                // Autoriser les endpoints d'authentification
+                .antMatchers("/", "/index.html", "/login.html", "/register.html", "/dashboard.html" ,"/css/**", "/js/**",
+                             "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/v3/api-docs", "/webjars/**")
+                    .permitAll()
                 .antMatchers("/api/auth/**").permitAll()
-                // Autoriser l'accès public aux produits si souhaité
                 .antMatchers("/api/products/**").permitAll()
-                // Pour toute autre requête, une authentification est requise
                 .anyRequest().authenticated()
             );
-        
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
