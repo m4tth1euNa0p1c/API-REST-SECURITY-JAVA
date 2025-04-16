@@ -87,11 +87,3 @@ API_REST_security/
 └── ROADMAP.md
 ```
 
-## Contributions
-
-Les contributions sont les bienvenues ! Pour contribuer :
-- Forkez le dépôt
-- Créez une branche (`git checkout -b feature-nouvelle-fonctionnalite`)
-- Faites vos modifications et committez (`git commit -m 'Ajout de nouvelle fonctionnalité'`)
-- Poussez la branche (`git push origin feature-nouvelle-fonctionnalite`)
-- Créez une Pull Request
