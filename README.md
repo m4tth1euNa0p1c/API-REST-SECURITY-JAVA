@@ -1,8 +1,6 @@
 # API REST Sécurisée - Catalogue de Produits
 
-## Description
-
-Ce projet est une API REST sécurisée développée avec **Spring Boot**. Elle permet de gérer un catalogue de produits tout en assurant une sécurisation avancée via **Spring Security**.
+API REST sécurisée développée avec **Spring Boot**. Elle permet de gérer un catalogue de produits tout en assurant une sécurisation avancée via **Spring Security**.
 
 L'API intègre également **Swagger** pour la documentation, **Docker** pour la containerisation, et suit les bonnes pratiques de développement avec une architecture modulaire et testable.
 
